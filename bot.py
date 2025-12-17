@@ -77,7 +77,13 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handles button clicks."""
     query = update.callback_query
     
-    # Acknowledgement to Telegram that the button was clicked (stops the loading animation)
+    # Check for the specific "coming_soon" button click first
+    if query.data == 'coming_soon':
+        # Show a pop-up alert to the user
+        await query.answer(text="The community channel is under construction. Stay tuned!", show_alert=True)
+        return
+
+    # For other buttons, stop the loading animation normally
     await query.answer()
     
     # Determine which button was pressed
@@ -86,8 +92,8 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif query.data == 'explain_blockchain':
         await query.message.reply_text(TEXT_BLOCKCHAIN, parse_mode=constants.ParseMode.HTML)
     elif query.data == 'explain_tslax':
-        # We also add a "Join Community" button for the sales pitch
-        join_btn = [[InlineKeyboardButton("Join TSLAx-SL Community ✈️", url="https://t.me/YOUR_CHANNEL_LINK_HERE")]]
+        # Changed: Button now triggers a 'coming_soon' callback instead of a URL
+        join_btn = [[InlineKeyboardButton("Community Coming Soon 🚧", callback_data='coming_soon')]]
         await query.message.reply_text(
             TEXT_TSLAX, 
             parse_mode=constants.ParseMode.HTML,
